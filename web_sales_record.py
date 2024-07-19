@@ -5,6 +5,13 @@ import os
 
 app = Flask(__name__)
 
+
+# Load data at the start of each request
+@app.before_request
+def load_data():
+    global record
+    record.load_from_file("sales_record.json")
+
 class SalesRecord:
     def __init__(self):
         self.sales = {}
@@ -15,7 +22,7 @@ class SalesRecord:
         if date not in self.sales:
             self.sales[date] = []
         self.sales[date].append({"item": item, "quantity": int(quantity), "price": float(price)})
-        self.save_to_file("sales_record.json")
+        self.save_to_file("sales_record.json")   # Save immediately after adding a sale
 
     def get_daily_total(self, date):
         if date in self.sales:
@@ -48,6 +55,7 @@ def add_sale():
     quantity = request.form['quantity']
     price = request.form['price']
     record.add_sale(item, quantity, price)
+    record.save_to_file("sales_record.json")  # Explicitly save after adding a sale
     return jsonify({"message": "Sale added successfully!"})
 
 @app.route('/get_daily_total', methods=['POST'])
@@ -55,6 +63,7 @@ def get_daily_total():
     date = request.form['date']
     total = record.get_daily_total(date)
     return jsonify({"total": record.format_currency(total)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

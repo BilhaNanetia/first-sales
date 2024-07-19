@@ -35,6 +35,7 @@ python web_sales_record.py
 ```
 2. Open a web browser and navigate to `http://127.0.0.1:5000`
 3. Use the web interface to add sales and get daily totals.
+4. Restart the server to view changes in the command line
 ## Data Storage
 Sales data is stored in a JSON file named `sales_record.json`. This file is automatically created in the same directory as the Python scripts when you add your first sale.
 ## Currency
