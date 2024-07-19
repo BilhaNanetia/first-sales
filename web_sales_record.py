@@ -5,7 +5,6 @@ import os
 
 app = Flask(__name__)
 
-
 # Load data at the start of each request
 @app.before_request
 def load_data():
@@ -22,12 +21,17 @@ class SalesRecord:
         if date not in self.sales:
             self.sales[date] = []
         self.sales[date].append({"item": item, "quantity": int(quantity), "price": float(price)})
-        self.save_to_file("sales_record.json")   # Save immediately after adding a sale
+        self.save_to_file("sales_record.json")  # Save immediately after adding a sale
 
     def get_daily_total(self, date):
         if date in self.sales:
             return sum(sale["quantity"] * sale["price"] for sale in self.sales[date])
         return 0
+
+    def get_daily_sales(self, date):
+        if date in self.sales:
+            return self.sales[date]
+        return []
 
     def save_to_file(self, filename):
         with open(filename, 'w') as f:
@@ -64,6 +68,20 @@ def get_daily_total():
     total = record.get_daily_total(date)
     return jsonify({"total": record.format_currency(total)})
 
+@app.route('/get_daily_sales', methods=['POST'])
+def get_daily_sales():
+    date = request.form['date']
+    sales = record.get_daily_sales(date)
+    formatted_sales = [
+        {
+            "item": sale["item"],
+            "quantity": sale["quantity"],
+            "price": record.format_currency(sale["price"]),
+            "total": record.format_currency(sale["quantity"] * sale["price"])
+        }
+        for sale in sales
+    ]
+    return jsonify(formatted_sales)
 
 if __name__ == '__main__':
     app.run(debug=True)

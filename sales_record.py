@@ -16,6 +16,11 @@ class SalesRecord:
             return sum(sale["quantity"] * sale["price"] for sale in self.sales[date])
         return 0
 
+    def get_daily_sales(self, date):
+        if date in self.sales:
+            return self.sales[date]
+        return []
+
     def save_to_file(self, filename):
         with open(filename, 'w') as f:
             json.dump(self.sales, f)
@@ -38,8 +43,9 @@ def main():
     while True:
         print("\n1. Add Sale")
         print("2. Get Daily Total")
-        print("3. Save and Exit")
-        choice = input("Enter your choice (1-3): ")
+        print("3. View Daily Sales")
+        print("4. Save and Exit")
+        choice = input("Enter your choice (1-4): ")
 
         if choice == '1':
             item = input("Enter item name: ")
@@ -54,6 +60,16 @@ def main():
             print(f"Total sales for {date}: {record.format_currency(total)}")
 
         elif choice == '3':
+            date = input("Enter date (YYYY-MM-DD): ")
+            daily_sales = record.get_daily_sales(date)
+            if daily_sales:
+                print(f"\nSales for {date}:")
+                for i, sale in enumerate(daily_sales, 1):
+                    print(f"{i}. Item: {sale['item']}, Quantity: {sale['quantity']}, Price: {record.format_currency(sale['price'])}")
+            else:
+                print(f"No sales recorded for {date}")
+
+        elif choice == '4':
             record.save_to_file(filename)
             print("Sales record saved. Exiting program.")
             break

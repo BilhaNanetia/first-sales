@@ -5,24 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Record</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1645021081564-561e7e5b016d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fG1vdG9yY3ljbGVzfGVufDB8fDB8fHww');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
 </head>
-<body>
-    <h1>Sales Record</h1>
-    <h2>Add Sale</h2>
-    <form id="addSaleForm">
-        <input type="text" id="item" placeholder="Item name" required>
-        <input type="number" id="quantity" placeholder="Quantity" required>
-        <input type="number" id="price" placeholder="Price per item(KES)" step="0.01" required>
-        <button type="submit">Add Sale</button>
-    </form>
-    <div id="addSaleMessage"></div>
+<body class="min-h-screen p-8 bg-black bg-opacity-50">
+    <div class="max-w-3xl mx-auto bg-white bg-opacity-90 shadow-lg rounded-lg p-6">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Sales Record</h1>
 
-    <h2>Get Daily Total</h2>
-    <form id="getDailyTotalForm">
-        <input type="date" id="date" required>
-        <button type="submit">Get Total</button>
-    </form>
-    <div id="dailyTotal"></div>
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Add Sale</h2>
+            <form id="addSaleForm" class="space-y-4">
+                <input type="text" id="item" placeholder="Item name" required class="w-full p-2 border rounded">
+                <input type="number" id="quantity" placeholder="Quantity" required class="w-full p-2 border rounded">
+                <input type="number" id="price" placeholder="Price per item (KES)" step="0.01" required class="w-full p-2 border rounded">
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Add Sale</button>
+            </form>
+            <div id="addSaleMessage" class="mt-2 text-green-600"></div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Get Daily Total</h2>
+            <form id="getDailyTotalForm" class="space-y-4">
+                <input type="date" id="dateTotal" required class="w-full p-2 border rounded">
+                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition duration-300">Get Total</button>
+            </form>
+            <div id="dailyTotal" class="mt-2 text-lg font-semibold"></div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">View Daily Sales</h2>
+            <form id="getDailySalesForm" class="space-y-4">
+                <input type="date" id="dateSales" required class="w-full p-2 border rounded">
+                <button type="submit" class="w-full bg-purple-500 text-white p-2 rounded hover:bg-purple-600 transition duration-300">View Sales</button>
+            </form>
+            <div id="dailySales" class="mt-2"></div>
+        </div>
+    </div>
 
     <script>
         $(document).ready(function() {
@@ -41,9 +66,32 @@
             $("#getDailyTotalForm").submit(function(e) {
                 e.preventDefault();
                 $.post("/get_daily_total", {
-                    date: $("#date").val()
+                    date: $("#dateTotal").val()
                 }, function(data) {
                     $("#dailyTotal").text("Total sales: " + data.total);
+                });
+            });
+
+            $("#getDailySalesForm").submit(function(e) {
+                e.preventDefault();
+                $.post("/get_daily_sales", {
+                    date: $("#dateSales").val()
+                }, function(data) {
+                    let salesHtml = "<ul class='list-disc pl-5'>";
+                    if (data.length > 0) {
+                        data.forEach(function(sale) {
+                            salesHtml += `<li class='mb-2'>
+                                <strong>${sale.item}</strong> - 
+                                Quantity: ${sale.quantity}, 
+                                Price: ${sale.price}, 
+                                Total: ${sale.total}
+                            </li>`;
+                        });
+                    } else {
+                        salesHtml += "<li>No sales recorded for this date</li>";
+                    }
+                    salesHtml += "</ul>";
+                    $("#dailySales").html(salesHtml);
                 });
             });
         });

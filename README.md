@@ -1,9 +1,10 @@
 # Motorbike Spares Sales Record System
 ## Description
-This project is a simple sales record system designed for a motorbike spares shop. It allows users to record daily sales of spare parts and calculate daily totals. The system is implemented in Python and provides both a command-line interface and a web-based interface using Flask.
+This project is a simple sales record system designed for a motorbike spares shop. It allows users to record daily sales of spare parts,calculate daily totals and view all sales for a specific day. The system is implemented in Python and provides both a command-line interface and a web-based interface using Flask.
 ## Features
 - Add sales records with item name, quantity, and price
 - Calculate and display daily sales totals
+- Display all sales for a specific day
 - Data persistence using JSON file storage
 - Web interface for easy access and use
 - Currency display in Kenya Shillings (KES)
@@ -27,7 +28,7 @@ pip install flask
 ``` console
 python sales_record.py
 ```
-2. Follow the on-screen prompts to add sales or get daily totals.
+2. Follow the on-screen prompts to add sales,get daily totals and view daily sales.
 ### Web Interface
 1. Run the web server:
 ``` console
