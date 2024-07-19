@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Record</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Sales Record</h1>
+    <h2>Add Sale</h2>
+    <form id="addSaleForm">
+        <input type="text" id="item" placeholder="Item name" required>
+        <input type="number" id="quantity" placeholder="Quantity" required>
+        <input type="number" id="price" placeholder="Price per item(KES)" step="0.01" required>
+        <button type="submit">Add Sale</button>
+    </form>
+    <div id="addSaleMessage"></div>
+
+    <h2>Get Daily Total</h2>
+    <form id="getDailyTotalForm">
+        <input type="date" id="date" required>
+        <button type="submit">Get Total</button>
+    </form>
+    <div id="dailyTotal"></div>
+
+    <script>
+        $(document).ready(function() {
+            $("#addSaleForm").submit(function(e) {
+                e.preventDefault();
+                $.post("/add_sale", {
+                    item: $("#item").val(),
+                    quantity: $("#quantity").val(),
+                    price: $("#price").val()
+                }, function(data) {
+                    $("#addSaleMessage").text(data.message);
+                    $("#addSaleForm")[0].reset();
+                });
+            });
+
+            $("#getDailyTotalForm").submit(function(e) {
+                e.preventDefault();
+                $.post("/get_daily_total", {
+                    date: $("#date").val()
+                }, function(data) {
+                    $("#dailyTotal").text("Total sales: " + data.total);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
